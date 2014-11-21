@@ -88,11 +88,14 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
   segment right_bound(ur(bounding_box), lr(bounding_box));
   segment bottom_bound(lr(bounding_box), ll(bounding_box));
   
+  // Each cell can only have a maximum of 2 intersections with the boundary.
+  
   if(!vc.is_degenerate()) {
     const voronoi_edge<double> *ie = vc.incident_edge();
     do {
       if(ie->vertex0() == NULL && ie->vertex1() == NULL) {
         // Infinite edges on both sides
+        std::cout << "Two-sided Infinite" << std::endl;
         segment perpendicular(points[ie->cell()->source_index()], points[ie->twin()->cell()->source_index()]); 
         point_data<double> midpoint(double(perpendicular.low().x()+perpendicular.high().x())/2.0,
                                     double(perpendicular.low().y()+perpendicular.high().y())/2.0);
@@ -101,10 +104,10 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         double edge_h =  double( perpendicular.high().y() - perpendicular.low().y() );
         double edge_unit = pow( pow( edge_v, 2 ) + pow( edge_h, 2 ), 0.5 );
         
-        segment max_edge( point(int(midpoint.x() + edge_h * edge_max_length * edge_unit), 
-                                int(midpoint.y() + edge_v * edge_max_length * edge_unit)), 
-                          point(int(midpoint.x() - edge_h * edge_max_length * edge_unit), 
-                                int(midpoint.y() - edge_v * edge_max_length * edge_unit)) );
+        segment max_edge( point(int(midpoint.x() + edge_h * edge_max_length / edge_unit), 
+                                int(midpoint.y() + edge_v * edge_max_length / edge_unit)), 
+                          point(int(midpoint.x() - edge_h * edge_max_length / edge_unit), 
+                                int(midpoint.y() - edge_v * edge_max_length / edge_unit)) );
         
         std::vector<point> intersection_points;
         if(intersect(left_bound, max_edge) && intersection_points.size() < 2) {
@@ -133,14 +136,16 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         }
         else {
           // ERROR -- NEED TO HANDLE
+          std::cout << "ERROR DOUBLE INFINITE EDGE" << std::endl;
         }
       }
       else if(ie->vertex0() == NULL || ie->vertex1() == NULL) {
         // One-sided infinite
+        std::cout << "One-sided Infinite" << std::endl;
         segment perpendicular(points[ie->cell()->source_index()], points[ie->twin()->cell()->source_index()]); 
         
         point midpoint;
-        if(ie->vertex0() == NULL) {
+        if(ie->vertex0() != NULL) {
           midpoint.x( ie->vertex0()->x() );
           midpoint.y( ie->vertex0()->y() );
         }
@@ -154,10 +159,10 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         double edge_h =  double( perpendicular.high().y() - perpendicular.low().y() );
         double edge_unit = pow( pow( edge_v, 2 ) + pow( edge_h, 2 ), 0.5 );
         
-        segment max_edge( point(int(midpoint.x() + edge_h * edge_max_length * edge_unit), 
-                                int(midpoint.y() + edge_v * edge_max_length * edge_unit)), 
-                          point(int(midpoint.x() - edge_h * edge_max_length * edge_unit), 
-                                int(midpoint.y() - edge_v * edge_max_length * edge_unit)) );
+        segment max_edge( point(int(midpoint.x() + edge_h * edge_max_length / edge_unit), 
+                                int(midpoint.y() + edge_v * edge_max_length / edge_unit)), 
+                          point(int(midpoint.x() - edge_h * edge_max_length / edge_unit), 
+                                int(midpoint.y() - edge_v * edge_max_length / edge_unit)) );
         
         bool intersected = true;
         point intersection_point;
@@ -191,18 +196,22 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         }
         else {
           // ERROR -- NEED TO HANDLE 
+          std::cout << "ERROR DOUBLE INFINITE EDGE" << std::endl;
         }
         
       }
       else {
         // Valid segment
+        std::cout << "Valid Segment" << std::endl;
         edges.push_back( segment( point( ie->vertex0()->x(), ie->vertex0()->y() ), 
                                   point( ie->vertex1()->x(), ie->vertex1()->y() ) ) );
         
       }
+      
+      ie = ie->next();
     } while(ie != vc.incident_edge()); 
   }
-  return std::vector<segment>();
+  return edges;
 }
 
 int main(int argc, char **argv)
@@ -259,7 +268,13 @@ int main(int argc, char **argv)
   
   // Testing rectangle data
   const rectangle_data<int> r = construct< rectangle_data<int> >(0, 0, 255, 255);
-  const voronoi_cell<double> &c = *(vd.cells().begin());
-  const voronoi_edge<double> *e = c.incident_edge();
-  generate_clipped_edges(c, r, points);
+  for(voronoi_diagram<double>::const_cell_iterator sit = vd.cells().begin(); sit != vd.cells().end(); sit++) {
+    std::cout << std::endl << std:: endl << "NEW CELL" << std::endl << std::endl;
+    const voronoi_cell<double> &c = *(sit);
+    std::vector<segment> edges = generate_clipped_edges(c, r, points);
+    for(std::vector<segment>::iterator it = edges.begin(); it != edges.end(); it++) {
+      print(*it);
+    }
+  }
+  
 }
