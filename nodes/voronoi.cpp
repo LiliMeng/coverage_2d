@@ -31,10 +31,10 @@ void print(const segment& s)
 
 point_data<double> intersection(const segment& s0, const segment& s1)
 {
-  double denom =  (s0.low().x() - s0.high().x())*(s0.low().y() - s0.high().y()) - 
+  double denom =  (s0.low().x() - s0.high().x())*(s1.low().y() - s1.high().y()) - 
                   (s0.low().y() - s0.high().y())*(s1.low().x() - s1.high().x());
   double v1 = (s0.low().x()*s0.high().y() - s0.low().y()*s0.high().x());
-  double v2 = (s1.low().x()*s1.high().y() - s1.low().y()*s1.high().y());
+  double v2 = (s1.low().x()*s1.high().y() - s1.low().y()*s1.high().x());
   double px = v1*(s1.low().x() - s1.high().x()) - (s0.low().x() - s0.high().x())*v2;
   double py = v1*(s1.low().y() - s1.high().y()) - (s0.low().y() - s0.high().y())*v2;
   
@@ -55,7 +55,7 @@ int signum(double a)
 {
   double e = 2^-52;
   if(a > e) return 1;
-  if(a < e) return -1;
+  if(a < -e) return -1;
   return 0;
 }
 
@@ -100,17 +100,25 @@ bool point_on_segment(const point& p0, const segment& s0)
 std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, const rectangle_data<int>& bounding_box, const std::vector<point>& points)
 {
   std::vector<segment> edges;
+  std::vector<segment> boundary_edges;
   
   int box_width = xh(bounding_box) - xl(bounding_box);
   int box_height = yh(bounding_box) - yl(bounding_box);
         
   segment left_bound(ll(bounding_box), ul(bounding_box));
-  segment top_bound(ul(bounding_box), ur(bounding_box));
+  segment bottom_bound(ul(bounding_box), ur(bounding_box));
   segment right_bound(ur(bounding_box), lr(bounding_box));
-  segment bottom_bound(lr(bounding_box), ll(bounding_box));
+  segment top_bound(ll(bounding_box), lr(bounding_box));
   
+  print(left_bound);
+  print(top_bound);
+  print(right_bound);
+  print(bottom_bound);
+
   // Each cell can only have a maximum of 2 intersections with the boundary.
   std::vector< std::pair<segment, segment> > boundary_intersections;
+  
+  point cell_vertex = points[vc.source_index()];
   
   if(!vc.is_degenerate()) {
     const voronoi_edge<double> *ie = vc.incident_edge();
@@ -131,35 +139,44 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
                           point(int(midpoint.x() - edge_h * edge_max_length / edge_unit), 
                                 int(midpoint.y() - edge_v * edge_max_length / edge_unit)) );
         
+        
         segment incident_bound;
         std::vector<point> intersection_points;
+
+        print(max_edge);
+        print(top_bound);
+        std::cout << intersect(top_bound, max_edge) << std::endl << std::endl;
         
         if(intersect(left_bound, max_edge) && intersection_points.size() < 2) {
           incident_bound = left_bound;
-          point p = intersection(left_bound, max_edge);
+          point_data<double> p = intersection(left_bound, max_edge);
           intersection_points.push_back( point( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))), 
                                                 int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) ) );
+          std::cout << "LEFT_BOUND" << std::endl;
         }
         if(intersect(top_bound, max_edge) && intersection_points.size() < 2) {
           incident_bound = top_bound;
-          point p = intersection(top_bound, max_edge);
+          point_data<double> p = intersection(top_bound, max_edge);
           intersection_points.push_back( point( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))), 
                                                 int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) ) );
+          std::cout << "TOP_BOUND" << std::endl;
         }
         if(intersect(right_bound, max_edge) && intersection_points.size() < 2) {
           incident_bound = right_bound;
-          point p = intersection(left_bound, max_edge);
+          point_data<double> p = intersection(left_bound, max_edge);
           intersection_points.push_back( point( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))), 
                                                 int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) ) );
+          std::cout << "RIGHT_BOUND" << std::endl;
         }
         if(intersect(bottom_bound, max_edge) && intersection_points.size() < 2) {
           incident_bound = bottom_bound;
-          point p = intersection(bottom_bound, max_edge);
+          point_data<double> p = intersection(bottom_bound, max_edge);
           intersection_points.push_back( point( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))), 
                                                 int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) ) );
+          std::cout << "BOTTOM_BOUND" << std::endl;
         }
         
-        if(boundary_intersections.size() == 2) {
+        if(intersection_points.size() == 2) {
           edges.push_back( segment( intersection_points[0], intersection_points[1] ) );
         }
         else {
@@ -198,25 +215,25 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         
         if(intersect(left_bound, max_edge)) {
           incident_bound = left_bound;
-          point p = intersection(left_bound, max_edge);
+          point_data<double> p = intersection(left_bound, max_edge);
           intersection_point.x( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))) ); 
           intersection_point.y( int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) );
         }
         else if(intersect(top_bound, max_edge)) {
           incident_bound = top_bound;
-          point p = intersection(top_bound, max_edge);
+          point_data<double> p = intersection(top_bound, max_edge);
           intersection_point.x( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))) ); 
           intersection_point.y( int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) );
         }
         else if(intersect(right_bound, max_edge)) {
           incident_bound = right_bound;
-          point p = intersection(left_bound, max_edge);
+          point_data<double> p = intersection(left_bound, max_edge);
           intersection_point.x( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))) ); 
           intersection_point.y( int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) );
         }
         else if(intersect(bottom_bound, max_edge)) {
           incident_bound = bottom_bound;
-          point p = intersection(bottom_bound, max_edge);
+          point_data<double> p = intersection(bottom_bound, max_edge);
           intersection_point.x( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))) ); 
           intersection_point.y( int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) );
         }
@@ -239,7 +256,7 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         }
         else {
           // ERROR -- NEED TO HANDLE 
-          std::cout << "ERROR DOUBLE INFINITE EDGE" << std::endl;
+          std::cout << "ERROR SINGLE INFINITE EDGE" << std::endl;
         }
         
       }
@@ -284,7 +301,7 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
       if(signum(determinant( a, b, c )) != signum(determinant( a, b, y )))
         c = boundary_intersections[0].second.high();
       
-      if(determinant( a, b, c ) < 0)
+      if(determinant( a, b, cell_vertex ) < 0)
         clockwise_merge = true;
       else
         clockwise_merge = false;
@@ -317,7 +334,6 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         std::rotate( boundaries.begin(), boundaries.begin() + b_shift, boundaries.end() );
       }
       
-      std::vector<segment> boundary_edges;
       bool merged = false;
       int b_index = 0;
       while(!merged) {
@@ -373,6 +389,10 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         
         aligned_bound.low( b_start );
         aligned_bound.high( b_end );
+        
+        // std::cout << "PRINTING ALIGNED BOUND" << std::endl;
+        // print(aligned_bound);
+        // std::cout << std::endl;
 
         if(point_on_segment( c, aligned_bound ) && point_on_segment( y, aligned_bound )) {
           // Finalize and merge points
@@ -398,6 +418,11 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
     else {
       // ERROR -- NEED TO HANDLE
     }
+    
+    // std::cout << "PRINTING BOUNDARYD EDGES" << std::endl;
+    // for(int j = 0; j < boundary_edges.size(); j++) print(boundary_edges[j]);
+    edges.insert( edges.end(), boundary_edges.begin(), boundary_edges.end() );
+    
   }
   return edges;
 }
@@ -406,7 +431,7 @@ int main(int argc, char **argv)
 {
   ros::init(argc,argv,"voronoi");
   std::vector< point > points;
-  points.push_back(point(50,50));
+  /* points.push_back(point(50,50));
   points.push_back(point(100,50));
   points.push_back(point(150,50));
   points.push_back(point(50,100));
@@ -414,7 +439,10 @@ int main(int argc, char **argv)
   points.push_back(point(150,100));
   points.push_back(point(50,150));
   points.push_back(point(100,150));
-  points.push_back(point(150,150));
+  points.push_back(point(150,150));*/
+  
+  points.push_back( point( 50, 100 ) );
+  points.push_back( point( 150, 100 ) );
   
   voronoi_diagram<double> vd;
   construct_voronoi(points.begin(), points.end(), &vd);
@@ -456,22 +484,15 @@ int main(int argc, char **argv)
   
   // Testing rectangle data
   const rectangle_data<int> r = construct< rectangle_data<int> >(0, 0, 255, 255);
-  /*for(voronoi_diagram<double>::const_cell_iterator sit = vd.cells().begin(); sit != vd.cells().end(); sit++) {
-    std::cout << std::endl << std:: endl << "NEW CELL" << std::endl << std::endl;
-    const voronoi_cell<double> &c = *(sit);
-    std::vector<segment> edges = generate_clipped_edges(c, r, points);
-    for(std::vector<segment>::iterator it = edges.begin(); it != edges.end(); it++) {
-      print(*it);
-    }
-  }*/
-  
   for(voronoi_diagram<double>::const_cell_iterator sit = vd.cells().begin(); sit != vd.cells().end(); sit++) {
     std::cout << std::endl << std:: endl << "NEW CELL" << std::endl << std::endl;
     const voronoi_cell<double> &c = *(sit);
     std::vector<segment> edges = generate_clipped_edges(c, r, points);
     for(int i = 0; i < edges.size(); i++) {
       print(edges[i]);
+      std::cout << std::endl;
     }
   }
+  std::cout << std::endl;
   
 }
