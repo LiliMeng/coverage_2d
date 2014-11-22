@@ -140,7 +140,7 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
                                 int(midpoint.y() - edge_v * edge_max_length / edge_unit)) );
         
         
-        segment incident_bound;
+        std::vector<segment> incident_bounds;
         std::vector<point> intersection_points;
 
         print(max_edge);
@@ -148,28 +148,28 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         std::cout << intersect(top_bound, max_edge) << std::endl << std::endl;
         
         if(intersect(left_bound, max_edge) && intersection_points.size() < 2) {
-          incident_bound = left_bound;
+          incident_bounds.push_back( left_bound );
           point_data<double> p = intersection(left_bound, max_edge);
           intersection_points.push_back( point( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))), 
                                                 int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) ) );
           std::cout << "LEFT_BOUND" << std::endl;
         }
         if(intersect(top_bound, max_edge) && intersection_points.size() < 2) {
-          incident_bound = top_bound;
+          incident_bounds.push_back( top_bound );
           point_data<double> p = intersection(top_bound, max_edge);
           intersection_points.push_back( point( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))), 
                                                 int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) ) );
           std::cout << "TOP_BOUND" << std::endl;
         }
         if(intersect(right_bound, max_edge) && intersection_points.size() < 2) {
-          incident_bound = right_bound;
+          incident_bounds.push_back( right_bound );
           point_data<double> p = intersection(left_bound, max_edge);
           intersection_points.push_back( point( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))), 
                                                 int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) ) );
           std::cout << "RIGHT_BOUND" << std::endl;
         }
         if(intersect(bottom_bound, max_edge) && intersection_points.size() < 2) {
-          incident_bound = bottom_bound;
+          incident_bounds.push_back( bottom_bound );
           point_data<double> p = intersection(bottom_bound, max_edge);
           intersection_points.push_back( point( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))), 
                                                 int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) ) );
@@ -177,7 +177,11 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         }
         
         if(intersection_points.size() == 2) {
-          edges.push_back( segment( intersection_points[0], intersection_points[1] ) );
+          segment boundary_edge( intersection_points[0], intersection_points[1] );
+          boundary_intersections.push_back( std::pair<segment, segment>(boundary_edge, incident_bounds[0]) );
+          boundary_intersections.push_back( std::pair<segment, segment>(boundary_edge, incident_bounds[1]) );
+
+          edges.push_back( boundary_edge );
         }
         else {
           // ERROR -- NEED TO HANDLE
@@ -287,12 +291,12 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
       }
       
       if(point_on_segment( boundary_intersections[1].first.low(), boundary_intersections[1].second )) {
-        x = boundary_intersections[1].first.high();
-        y = boundary_intersections[1].first.low();
+        y = boundary_intersections[1].first.high();
+        x = boundary_intersections[1].first.low();
       }
       else {
-        x = boundary_intersections[1].first.low();
-        y = boundary_intersections[1].first.high();
+        y = boundary_intersections[1].first.low();
+        x = boundary_intersections[1].first.high();
       }
       
       // Determine direction
@@ -396,20 +400,38 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
 
         if(point_on_segment( c, aligned_bound ) && point_on_segment( y, aligned_bound )) {
           // Finalize and merge points
+          std::cout << "Y AND C ON SAME SEGMENT" << std::endl;
+          print(c);
+          std::cout << std::endl;
+          print(y);
+          std::cout << std::endl;
           boundary_edges.push_back( segment( c, y ) );
           merged = true;
         }
         else if(point_on_segment( y, aligned_bound )) {
           // Finalize and complete boundary
+          std::cout << "Y ON BOUND" << std::endl;
+          print(y);
+          std::cout << std::endl;
+          print(aligned_bound);
+          std::cout << std::endl;
           boundary_edges.push_back( segment( aligned_bound.low(), y ) );
           merged = true;
         }
         else if(point_on_segment( c, aligned_bound )) {
           // Begin merging
+          std::cout << "C ON BOUND" << std::endl;
+          print(c);
+          std::cout << std::endl;
+          print(aligned_bound);
+          std::cout << std::endl;
           boundary_edges.push_back( segment( c, aligned_bound.high() ) );
         }
         else {
           // Insert entire segment
+          std::cout << "NONE ON SEGMENT" << std::endl;
+          print(y);
+          std::cout << std::endl;
           boundary_edges.push_back( aligned_bound );
         }
         b_index++;
