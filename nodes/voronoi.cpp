@@ -334,6 +334,14 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
       std::vector<segment> boundaries;
 
       if(clockwise_merge) {
+        int b_shift = 0;
+        if( boundary_intersections[0].second == right_bound )
+          b_shift = 1;
+        else if( boundary_intersections[0].second == bottom_bound )
+          b_shift = 2;
+        else if( boundary_intersections[0].second == left_bound )
+          b_shift = 3;
+
         // Fix endpoints
         point t;
         if(top_bound.low().x() > top_bound.high().x()) {
@@ -361,19 +369,20 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         boundaries.push_back( bottom_bound );
         boundaries.push_back( left_bound );
 
-        int b_shift = 0;
-        if( boundary_intersections[0].second == right_bound )
-          b_shift = 1;
-        else if( boundary_intersections[0].second == bottom_bound )
-          b_shift = 2;
-        else if( boundary_intersections[0].second == left_bound )
-          b_shift = 3;
         std::rotate( boundaries.begin(), boundaries.begin() + b_shift, boundaries.end() );
       }
       else {
+        int b_shift = 0;
+        if( boundary_intersections[0].second == top_bound )
+          b_shift = 3;
+        else if( boundary_intersections[0].second == right_bound )
+          b_shift = 2;
+        else if( boundary_intersections[0].second == bottom_bound )
+          b_shift = 1;
+
         // Fix endpoints
         point t;
-        if(top_bound.low().x() > top_bound.high().x()) {
+        if(top_bound.low().x() < top_bound.high().x()) {
           t = top_bound.low();
           top_bound.low(top_bound.high());
           top_bound.high(t);
@@ -388,7 +397,7 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
           bottom_bound.low(bottom_bound.high());
           bottom_bound.high(t);
         }
-        if(left_bound.low().y() < left_bound.high().y()) {
+        if(left_bound.low().y() > left_bound.high().y()) {
           t = left_bound.low();
           left_bound.low(left_bound.high());
           left_bound.high(t);
@@ -398,15 +407,13 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         boundaries.push_back( right_bound );
         boundaries.push_back( top_bound );
 
-        int b_shift = 0;
-        if( boundary_intersections[0].second == top_bound )
-          b_shift = 3;
-        else if( boundary_intersections[0].second == right_bound )
-          b_shift = 2;
-        else if( boundary_intersections[0].second == bottom_bound )
-          b_shift = 1;
         std::rotate( boundaries.begin(), boundaries.begin() + b_shift, boundaries.end() );
       }
+
+      std::cout << std::endl << "BOUNDARIES" << std::endl;
+      print(boundary_intersections[0].second);
+      for(int r = 0; r < boundaries.size(); r++) print(boundaries[r]);
+      std::cout << std::endl << std::endl;
       
       bool merged = false;
       int b_index = 0;
@@ -416,53 +423,6 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
 
         b_start = boundaries[b_index].low();
         b_end = boundaries[b_index].high();
-        /*if(clockwise_merge) {
-          if(boundaries[b_index].low().x() > boundaries[b_index].high().x()) {
-            b_start = boundaries[b_index].high();
-            b_end = boundaries[b_index].low();
-          }
-          else if(boundaries[b_index].low().x() < boundaries[b_index].high().x()) {
-            b_start = boundaries[b_index].low();
-            b_end = boundaries[b_index].high();
-          }
-          else {
-            if(boundaries[b_index].low().y() < boundaries[b_index].high().y()) {
-              b_start = boundaries[b_index].low();
-              b_end = boundaries[b_index].high();
-            }
-            else if(boundaries[b_index].low().y() > boundaries[b_index].high().y()) {
-              b_start = boundaries[b_index].high();
-              b_end = boundaries[b_index].low();
-            }
-            else {
-              // Points are equivalent -- HANDLE
-            }
-          }
-        }
-        else {
-          if(boundaries[b_index].low().x() > boundaries[b_index].high().x()) {
-            b_start = boundaries[b_index].low();
-            b_end = boundaries[b_index].high();
-          }
-          else if(boundaries[b_index].low().x() < boundaries[b_index].high().x()) {
-            b_start = boundaries[b_index].low();
-            b_end = boundaries[b_index].high();
-          }
-          else {
-            if(boundaries[b_index].low().y() < boundaries[b_index].high().y()) {
-              b_start = boundaries[b_index].high();
-              b_end = boundaries[b_index].low();
-            }
-            else if(boundaries[b_index].low().y() > boundaries[b_index].high().y()) {
-              b_start = boundaries[b_index].low();
-              b_end = boundaries[b_index].high();
-            }
-            else {
-              // Points are equivalent -- HANDLE
-            }
-          }
-        }*/
-        
         aligned_bound.low( b_start );
         aligned_bound.high( b_end );
         
@@ -499,7 +459,7 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         }
         else if(point_on_segment( b, aligned_bound )) {
           // Begin merging
-          std::cout << "C ON BOUND" << std::endl;
+          std::cout << "B ON BOUND" << std::endl;
           print(b);
           std::cout << std::endl;
           print(aligned_bound);
@@ -600,10 +560,14 @@ int main(int argc, char **argv)
     std::cout << std::endl << std:: endl << "NEW CELL" << std::endl << std::endl;
     const voronoi_cell<double> &c = *(sit);
     std::vector<segment> edges = generate_clipped_edges(c, r, points);
+    std::cout << std::endl << std::endl;
+    std::cout << "*****************************************" << std::endl;
     for(int i = 0; i < edges.size(); i++) {
       print(edges[i]);
       std::cout << std::endl;
     }
+    std::cout << "*****************************************" << std::endl;
+    std::cout << std::endl << std::endl;
   }
   std::cout << std::endl;
   
