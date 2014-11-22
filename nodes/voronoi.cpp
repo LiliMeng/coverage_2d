@@ -79,21 +79,24 @@ bool intersect(const segment& s0, const segment& s1)
 // Either a vertical or horizonal segment
 bool point_on_segment(const point& p0, const segment& s0)
 {
-  if(s0.low().x() - s0.high().x() == 0) {
+  if(s0.low().x() == s0.high().x()) {
     int y_max = (s0.low().y() > s0.high().y()) ? s0.low().y(): s0.high().y();
     int y_min = (s0.low().y() < s0.high().y()) ? s0.low().y(): s0.high().y();
-    if(p0.y() <= y_max && p0.y() >= y_min)
+    if(p0.y() <= y_max && p0.y() >= y_min && p0.x() == s0.low().x())
+      return true;
+    else
+      return false;
+  }
+  else if(s0.low().y() == s0.high().y()) {
+    int x_max = (s0.low().x() > s0.high().x()) ? s0.low().x(): s0.high().x();
+    int x_min = (s0.low().x() < s0.high().x()) ? s0.low().x(): s0.high().x();
+    if(p0.x() <= x_max && p0.x() >= x_min && p0.y() == s0.low().y())
       return true;
     else
       return false;
   }
   else {
-    int x_max = (s0.low().x() > s0.high().x()) ? s0.low().x(): s0.high().x();
-    int x_min = (s0.low().x() < s0.high().x()) ? s0.low().x(): s0.high().x();
-    if(p0.x() <= x_max && p0.x() >= x_min)
-      return true;
-    else
-      return false;
+    return false;
   }
 }
 
