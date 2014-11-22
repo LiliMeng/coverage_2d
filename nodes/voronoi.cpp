@@ -9,7 +9,7 @@ using namespace boost::polygon;
 typedef segment_data<int> segment;
 typedef point_data<int> point;
 
-double determinant(const point&, const point&, const point&);
+double ccw(const point&, const point&, const point&);
 bool intersect(const segment&, const segment&);
 point_data<double> intersection(const segment&, const segment&);
 void print(const segment&);
@@ -45,7 +45,7 @@ point_data<double> intersection(const segment& s0, const segment& s1)
     return point_data<double>();
 }
 
-double determinant(const point& p0, const point& p1, const point& p2)
+double ccw(const point& p0, const point& p1, const point& p2)
 {
   return  (p0.x() * p1.y() + p0.y() * p2.x() + p1.x() * p2.y()) - 
           (p0.x() * p2.y() + p0.y() * p1.x() + p1.y() * p2.x());
@@ -69,8 +69,8 @@ double clamp(double v, double lb, double ub)
 // Segment intersection
 bool intersect(const segment& s0, const segment& s1) 
 {
-  if( signum(determinant(s0.low(), s0.high(), s1.low())) != 
-      signum(determinant(s0.low(), s0.high(), s1.high())) )
+  if( signum(ccw(s0.low(), s0.high(), s1.low())) != 
+      signum(ccw(s0.low(), s0.high(), s1.high())) )
     return true;
   else
     return false;
@@ -195,50 +195,64 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         // One-sided infinite
         std::cout << "One-sided Infinite" << std::endl;
         segment perpendicular(points[ie->cell()->source_index()], points[ie->twin()->cell()->source_index()]); 
+        point_data<double> midpoint(double(perpendicular.low().x()+perpendicular.high().x())/2.0,
+                                    double(perpendicular.low().y()+perpendicular.high().y())/2.0);
         
-        point midpoint;
+        point base;
         if(ie->vertex0() != NULL) {
-          midpoint.x( ie->vertex0()->x() );
-          midpoint.y( ie->vertex0()->y() );
+          base.x( ie->vertex0()->x() );
+          base.y( ie->vertex0()->y() );
         }
         else {
-          midpoint.x( ie->vertex1()->x() );
-          midpoint.y( ie->vertex1()->y() );
+          base.x( ie->vertex1()->x() );
+          base.y( ie->vertex1()->y() );
         }
         
-        double edge_max_length = box_width+box_height;
+        /*double edge_max_length = box_width+box_height;
         double edge_v = double( perpendicular.low().x() - perpendicular.high().x() );
         double edge_h =  double( perpendicular.high().y() - perpendicular.low().y() );
+        double edge_unit = pow( pow( edge_v, 2 ) + pow( edge_h, 2 ), 0.5 );*/
+        
+        double edge_max_length = box_width+box_height;
+        double edge_v = double( midpoint.y() - base.y() );
+        double edge_h =  double( midpoint.x() - base.x() );
         double edge_unit = pow( pow( edge_v, 2 ) + pow( edge_h, 2 ), 0.5 );
         
-        segment max_edge( point(int(midpoint.x() + edge_h * edge_max_length / edge_unit), 
-                                int(midpoint.y() + edge_v * edge_max_length / edge_unit)), 
-                          point(int(midpoint.x() - edge_h * edge_max_length / edge_unit), 
-                                int(midpoint.y() - edge_v * edge_max_length / edge_unit)) );
+        segment max_edge( base, 
+                          point(int(base.x() + edge_h * edge_max_length / edge_unit), 
+                                int(base.y() + edge_v * edge_max_length / edge_unit)) );
         
         bool intersected = true;
         segment incident_bound;
         point intersection_point;
+
+        std::cout << std::endl << std::endl << "MAX EDGE";
+        print(max_edge);
+        std::cout << std::endl;
         
         if(intersect(left_bound, max_edge)) {
+          std::cout << "LEFT BOUND INTERSECTION" << std::endl;
           incident_bound = left_bound;
           point_data<double> p = intersection(left_bound, max_edge);
           intersection_point.x( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))) ); 
           intersection_point.y( int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) );
         }
         else if(intersect(top_bound, max_edge)) {
+          std::cout << "TOP BOUND INTERSECTION" << std::endl;
           incident_bound = top_bound;
           point_data<double> p = intersection(top_bound, max_edge);
           intersection_point.x( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))) ); 
           intersection_point.y( int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) );
         }
         else if(intersect(right_bound, max_edge)) {
+          std::cout << "RIGHT BOUND INTERSECTION" << std::endl;
           incident_bound = right_bound;
-          point_data<double> p = intersection(left_bound, max_edge);
+          point_data<double> p = intersection(right_bound, max_edge);
           intersection_point.x( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))) ); 
           intersection_point.y( int(clamp(p.y(), yl(bounding_box), yh(bounding_box))) );
         }
         else if(intersect(bottom_bound, max_edge)) {
+          std::cout << "BOTTOM BOUND INTERSECTION" << std::endl;
           incident_bound = bottom_bound;
           point_data<double> p = intersection(bottom_bound, max_edge);
           intersection_point.x( int(clamp(p.x(), xl(bounding_box), xh(bounding_box))) ); 
@@ -251,13 +265,15 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         if(intersected) {
           segment boundary_edge;
           if(ie->vertex0() != NULL) {
-            boundary_edge.low( midpoint );
+            boundary_edge.low( base );
             boundary_edge.high( intersection_point );
           }
           else {
             boundary_edge.high( intersection_point );
-            boundary_edge.low( midpoint );
+            boundary_edge.low( base );
           }
+          std::cout << std::endl << std::endl << "PRINTING BOUNDARY EDGE: ";
+          print(boundary_edge);
           boundary_intersections.push_back( std::pair<segment, segment>( boundary_edge, incident_bound ) );
           edges.push_back( boundary_edge );
         }
@@ -317,13 +333,13 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
       // Determine direction
       bool clockwise_merge;
       c = boundary_intersections[0].second.low();
-      if(signum(determinant( a, b, c )) != signum(determinant( a, b, cell_vertex )))
+      if(signum(ccw( a, b, c )) != signum(ccw( a, b, cell_vertex )))
         c = boundary_intersections[0].second.high();
 
       std::cout << std::endl << "PRINTING C THE BOUNDARY POINT" << std::endl;
       print(c);
       
-      if(determinant( a, b, cell_vertex ) > 0)
+      if(ccw( a, b, cell_vertex ) > 0)
         clockwise_merge = true;
       else
         clockwise_merge = false;
@@ -503,7 +519,7 @@ int main(int argc, char **argv)
 {
   ros::init(argc,argv,"voronoi");
   std::vector< point > points;
-  /* points.push_back(point(50,50));
+  points.push_back(point(50,50));
   points.push_back(point(100,50));
   points.push_back(point(150,50));
   points.push_back(point(50,100));
@@ -511,10 +527,10 @@ int main(int argc, char **argv)
   points.push_back(point(150,100));
   points.push_back(point(50,150));
   points.push_back(point(100,150));
-  points.push_back(point(150,150));*/
+  points.push_back(point(150,150));
   
-  points.push_back( point( 50, 100 ) );
-  points.push_back( point( 150, 100 ) );
+  // points.push_back( point( 50, 100 ) );
+  // points.push_back( point( 150, 100 ) );
   
   voronoi_diagram<double> vd;
   construct_voronoi(points.begin(), points.end(), &vd);
