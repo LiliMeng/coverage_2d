@@ -366,27 +366,16 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         y = boundary_intersections[1].first.high();
       }
 
-      std::cout << std::endl << "PRINT INTERSECTION VECTORS" << std::endl;
-      print(a);
-      print(b);
-      print(x);
-      print(y);
-      
       // Determine direction
       bool clockwise_merge;
       c = boundary_intersections[0].second.low();
       if(signum(ccw( a, b, c )) != signum(ccw( a, b, cell_vertex )))
         c = boundary_intersections[0].second.high();
-
-      std::cout << std::endl << "PRINTING C THE BOUNDARY POINT" << std::endl;
-      print(c);
       
       if(ccw( a, b, cell_vertex ) > 0)
         clockwise_merge = true;
       else
         clockwise_merge = false;
-      
-      std::cout << std::endl << ((clockwise_merge) ? "CLOCKWISE": "COUNTERCLOCKWISE") << " MERGING" << std::endl;
 
       // Define the boundary segments in traversal order
       std::vector<segment> boundaries;
@@ -468,11 +457,6 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         std::rotate( boundaries.begin(), boundaries.begin() + b_shift, boundaries.end() );
       }
 
-      std::cout << std::endl << "BOUNDARIES" << std::endl;
-      print(boundary_intersections[0].second);
-      for(int r = 0; r < boundaries.size(); r++) print(boundaries[r]);
-      std::cout << std::endl << std::endl;
-      
       bool merged = false;
       int b_index = 0;
       while(!merged) {
@@ -483,10 +467,6 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
         b_end = boundaries[b_index].high();
         aligned_bound.low( b_start );
         aligned_bound.high( b_end );
-        
-        std::cout << "PRINTING ALIGNED BOUND" << std::endl;
-        print(aligned_bound);
-        std::cout << std::endl;
 
         if(point_on_segment( b, aligned_bound ) && point_on_segment( y, aligned_bound )) {
           // Finalize and merge points
@@ -546,12 +526,7 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
       // ERROR -- NEED TO HANDLE
     }
     
-    // std::cout << "PRINTING BOUNDARYD EDGES" << std::endl;
-    // for(int j = 0; j < boundary_edges.size(); j++) print(boundary_edges[j]);
     edges.insert( edges.end(), boundary_edges.begin(), boundary_edges.end() );
-    std::cout << "PRINTING CELL VERTEX" << std::endl;
-    print(cell_vertex);
-    std::cout << std::endl;
     
   }
   return edges;
@@ -570,9 +545,6 @@ int main(int argc, char **argv)
   points.push_back(point(50,150));
   points.push_back(point(100,150));
   points.push_back(point(150,150));
-  
-  // points.push_back( point( 50, 100 ) );
-  // points.push_back( point( 150, 100 ) );
   
   voronoi_diagram<double> vd;
   construct_voronoi(points.begin(), points.end(), &vd);
@@ -603,7 +575,6 @@ int main(int argc, char **argv)
       edge = edge->next();
     } while(edge != cell.incident_edge());
   }
-  // std::cout << result << std::endl;
   
   // Define sweep line
   segment sweepline(point(0,0), point(200,200));

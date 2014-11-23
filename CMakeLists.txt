@@ -109,17 +109,8 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-add_executable(coverage_control nodes/coverage_control.cpp)
-target_link_libraries(coverage_control ${catkin_LIBRARIES})
 add_executable(voronoi nodes/voronoi.cpp)
 target_link_libraries(voronoi ${catkin_LIBRARIES})
-add_executable(cv_voronoi nodes/cv_voronoi.cpp)
-target_link_libraries(cv_voronoi 
-  ${catkin_LIBRARIES}
-  ${OpenCV_LIBRARIES}
-)
-add_executable(costmap_test nodes/costmap_test.cpp)
-target_link_libraries(costmap_test ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

@@ -1,7 +1,0 @@
-
-<node name="MapServer" pkg="map_server" type="map_server" args="$(find nav2d_tutorials)/world/tutorial.yaml" />
-<node name="SelfLocalizer" pkg="nav2d_localizer" type="localizer">
-<remap from="scan" to="base_scan"/>
-    <param name="min_particles" type="int" value="5000"/>
-        <param name="max_particles" type="int" value="20000"/>
-        </node>
