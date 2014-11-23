@@ -3,7 +3,7 @@
   <arg name="use_sim_time" default="true" />
   <arg name="gui" default="true" />
   <arg name="headless" default="false" />
-  <arg name="world_name" default="$(find explorer_project)/worlds/willow_garage.world" />
+  <arg name="world_name" default="$(find coverage_control)/worlds/willow_garage.world" />
 
   <!-- Jackal accessories which may be simulated. Pass true to enable. -->
   <arg name="front_laser" default="false" />

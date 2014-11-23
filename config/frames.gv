@@ -1,15 +1,16 @@
 digraph G {
-"chassis_link" -> "front_left_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.204 Hz\nMost recent transform: 791.586 \nBuffer length: 4.900 sec\n"];
-"base_link" -> "chassis_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.204 Hz\nMost recent transform: 792.095 \nBuffer length: 4.900 sec\n"];
-"chassis_link" -> "front_right_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.204 Hz\nMost recent transform: 791.586 \nBuffer length: 4.900 sec\n"];
-"chassis_link" -> "rear_left_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.204 Hz\nMost recent transform: 791.586 \nBuffer length: 4.900 sec\n"];
-"chassis_link" -> "rear_right_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.204 Hz\nMost recent transform: 791.586 \nBuffer length: 4.900 sec\n"];
-"odom" -> "base_link"[label="Broadcaster: /ekf_localization\nAverage rate: 50.204 Hz\nMost recent transform: 791.595 \nBuffer length: 4.900 sec\n"];
-"map" -> "odom"[label="Broadcaster: /slam_gmapping\nAverage rate: 20.204 Hz\nMost recent transform: 791.646 \nBuffer length: 4.900 sec\n"];
-"chassis_link" -> "fenders_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.204 Hz\nMost recent transform: 792.095 \nBuffer length: 4.900 sec\n"];
-"mid_mount" -> "front_mount"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.204 Hz\nMost recent transform: 792.095 \nBuffer length: 4.900 sec\n"];
-"chassis_link" -> "mid_mount"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.204 Hz\nMost recent transform: 792.095 \nBuffer length: 4.900 sec\n"];
-"chassis_link" -> "imu_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.204 Hz\nMost recent transform: 792.095 \nBuffer length: 4.900 sec\n"];
-"chassis_link" -> "navsat_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.204 Hz\nMost recent transform: 792.095 \nBuffer length: 4.900 sec\n"];
-"mid_mount" -> "rear_mount"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.204 Hz\nMost recent transform: 792.095 \nBuffer length: 4.900 sec\n"];
+"base_link" -> "chassis_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
+"odom" -> "base_link"[label="Broadcaster: /ekf_localization\nAverage rate: 50.228 Hz\nMost recent transform: 8278.241 \nBuffer length: 4.599 sec\n"];
+"chassis_link" -> "fenders_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
+"front_mount" -> "front_laser"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
+"mid_mount" -> "front_mount"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
+"chassis_link" -> "mid_mount"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
+"chassis_link" -> "imu_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
+"chassis_link" -> "navsat_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
+"mid_mount" -> "rear_mount"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
+"map" -> "odom"[label="Broadcaster: /slam_gmapping\nAverage rate: 20.217 Hz\nMost recent transform: 8278.300 \nBuffer length: 4.600 sec\n"];
+"chassis_link" -> "front_left_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.250 \nBuffer length: 4.600 sec\n"];
+"chassis_link" -> "front_right_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.250 \nBuffer length: 4.600 sec\n"];
+"chassis_link" -> "rear_left_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.250 \nBuffer length: 4.600 sec\n"];
+"chassis_link" -> "rear_right_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.250 \nBuffer length: 4.600 sec\n"];
 }

@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   tf
+  nav_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -117,6 +118,8 @@ target_link_libraries(cv_voronoi
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
+add_executable(costmap_test nodes/costmap_test.cpp)
+target_link_libraries(costmap_test ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

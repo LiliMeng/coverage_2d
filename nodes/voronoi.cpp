@@ -100,6 +100,53 @@ bool point_on_segment(const point& p0, const segment& s0)
   }
 }
 
+std::pair<int, int> generate_iteration_range(int i, std::vector<segment> edges, int direction = VERTICAL)
+{
+  std::pair<int, int> range(-1, -1);
+  for(std::vector<segment>::iterator edge = edges.begin(); edge != edges.end(); edge++) {
+    if(direction == VERTICAL) {
+      if((i <= edge->low().y() && i >= edge->high().y()) || 
+         (i <= edge->high().y() && i >= edge->low().y())) {
+        if(edge->low().y() == edge->high().y()) {
+          range.first = edge->low().x();
+          range.second = edge->high().x();
+          break;
+        }
+
+        segment dummy( point(edge->low().x(), i), point(edge->high().x(), i));
+        if(range.first == -1) {
+          range.first = round( intersection( dummy, *(edge) ).x() );
+        }
+        else if(range.second == -1) {
+          range.second = round( intersection( dummy, *(edge) ).x() );
+          break;
+        }
+      }
+    }
+    else if(direction == HORIZONTAL) {
+      if((i <= edge->low().x() && i >= edge->high().x()) || 
+         (i <= edge->high().x() && i >= edge->low().x())) {
+        if(edge->low().x() == edge->high().x()) {
+          range.first = edge->low().y();
+          range.second = edge->high().y();
+          break;
+        }
+
+        segment dummy( point(edge->low().y(), i), point(edge->high().y(), i));
+        if(range.first == -1)
+          range.first = round( intersection( dummy, *(edge) ).y() );
+        else if(range.second == -1)
+          range.second = round( intersection( dummy, *(edge) ).y() );
+        else
+          break;
+      }
+    }
+  }
+  if(range.first > range.second)
+    std::swap( range.first, range.second );
+  return range;
+}
+
 std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, const rectangle_data<int>& bounding_box, const std::vector<point>& points)
 {
   std::vector<segment> edges;
@@ -207,11 +254,6 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
           base.x( ie->vertex1()->x() );
           base.y( ie->vertex1()->y() );
         }
-        
-        /*double edge_max_length = box_width+box_height;
-        double edge_v = double( perpendicular.low().x() - perpendicular.high().x() );
-        double edge_h =  double( perpendicular.high().y() - perpendicular.low().y() );
-        double edge_unit = pow( pow( edge_v, 2 ) + pow( edge_h, 2 ), 0.5 );*/
         
         double edge_max_length = box_width+box_height;
         double edge_v = double( midpoint.y() - base.y() );
@@ -571,7 +613,7 @@ int main(int argc, char **argv)
   }
   
   // Testing rectangle data
-  const rectangle_data<int> r = construct< rectangle_data<int> >(0, 0, 200, 200);
+  const rectangle_data<int> r = construct< rectangle_data<int> >(0, 0, 500, 500);
   for(voronoi_diagram<double>::const_cell_iterator sit = vd.cells().begin(); sit != vd.cells().end(); sit++) {
     std::cout << std::endl << std:: endl << "NEW CELL" << std::endl << std::endl;
     const voronoi_cell<double> &c = *(sit);
@@ -586,5 +628,13 @@ int main(int argc, char **argv)
     std::cout << std::endl << std::endl;
   }
   std::cout << std::endl;
-  
+
+  std::vector<segment> triangle;
+  triangle.push_back( segment( point(0,3), point(-3,0) ) );
+  triangle.push_back( segment( point(-3,0), point(3,0) ) );
+  triangle.push_back( segment( point(3,0), point(0,3) ) );
+  for(int i = 0; i < 5; i++) {
+    std::pair<int, int> irange = generate_iteration_range(i , triangle);
+    std::cout << i << ": " << irange.first << " " << irange.second << std::endl;
+  }
 }
