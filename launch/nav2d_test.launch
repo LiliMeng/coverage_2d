@@ -1,0 +1,6 @@
+<launch>
+  <node name="Mapper" pkg="nav2d_karto" type="mapper">
+    <remap from="scan" to="base_scan" />
+    <rosparam file="$(find nav2d_tutorials)/param/mapper.yaml" />
+  </node>
+</launch>

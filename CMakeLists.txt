@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(coverage_control)
+project(coverage_2d)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -86,7 +86,7 @@ find_package(OpenCV REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES coverage_control
+#  LIBRARIES coverage_2d
   CATKIN_DEPENDS costmap_2d jackal_gazebo map_server roscpp rospy tf
 #  DEPENDS system_lib
 )
@@ -104,20 +104,20 @@ include_directories(
 )
 
 ## Declare a cpp library
-# add_library(coverage_control
-#   src/${PROJECT_NAME}/coverage_control.cpp
+# add_library(coverage_2d
+#   src/${PROJECT_NAME}/coverage_2d.cpp
 # )
 
 ## Declare a cpp executable
-add_executable(voronoi nodes/voronoi.cpp)
+add_executable(voronoi src/voronoi.cpp)
 target_link_libraries(voronoi ${catkin_LIBRARIES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(coverage_control_node coverage_control_generate_messages_cpp)
+# add_dependencies(coverage_2d_node coverage_2d_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(coverage_control
+# target_link_libraries(coverage_2d
 #   ${catkin_LIBRARIES}
 # )
 
@@ -137,7 +137,7 @@ target_link_libraries(voronoi ${catkin_LIBRARIES})
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS coverage_control coverage_control_node
+# install(TARGETS coverage_2d coverage_2d_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -162,7 +162,7 @@ target_link_libraries(voronoi ${catkin_LIBRARIES})
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_coverage_control.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_coverage_2d.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
