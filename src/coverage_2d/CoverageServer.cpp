@@ -22,7 +22,7 @@ bool CoverageServer::compute_voronoi_centroids(ComputeCentroidsRequest& req, Com
   // Obtain the map from the server
   nav_msgs::GetMap map_response;
   if(map_client_.call(map_response)) {
-    nav_msgs::OccupancyGrid& map = map_response.map;
+    nav_msgs::OccupancyGrid& map = map_response.response.map;
     
     // Redefine set of points in boost format
     std::vector<point> L;
@@ -32,9 +32,10 @@ bool CoverageServer::compute_voronoi_centroids(ComputeCentroidsRequest& req, Com
     construct_voronoi( L.begin(), L.end(), &vd );
 
     std::vector< std::vector<segment> > tessellation;
+    const rectangle r = construct<rectangle>( 0, 0, int(map.info.width), int(map.info.height) );
     for(voronoi_diagram<double>::const_cell_iterator it = vd.cells().begin(); it != vd.cells().end(); it++) {
       const voronoi_cell<double> &c = *(it);
-      tesselation.push_back( generate_clipped_edges( c, r, points ) );
+      tessellation.push_back( generate_clipped_edges( c, r, L ) );
     }
 
     // Iterate over each tesselation and compute centroid
@@ -42,6 +43,6 @@ bool CoverageServer::compute_voronoi_centroids(ComputeCentroidsRequest& req, Com
 
   }
   else {
-    ROS_ERROR("Service %s could not be called successfully.", map_service.c_str());
+    ROS_ERROR("Service ComputeCentroids could not be called successfully.");
   }
 }

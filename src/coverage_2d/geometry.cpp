@@ -1,3 +1,4 @@
+#include <ros/ros.h>
 #include <coverage_2d/geometry.h>
 
 using namespace boost::polygon;
@@ -87,7 +88,7 @@ bool point_on_segment(const point& p0, const segment& s0)
   }
 }
 
-std::pair<int, int> generate_iteration_range(int i, std::vector<segment> edges, int direction = VERTICAL)
+std::pair<int, int> generate_iteration_range(int i, std::vector<segment> edges, int direction)
 {
   std::pair<int, int> range(-1, -1);
   for(std::vector<segment>::iterator edge = edges.begin(); edge != edges.end(); edge++) {

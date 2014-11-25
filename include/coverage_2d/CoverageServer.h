@@ -3,6 +3,7 @@
 
 #include <ros/ros.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/GetMap.h>
 #include <coverage_2d/geometry.h>
 #include <coverage_2d/ComputeCentroids.h>
 
@@ -17,8 +18,8 @@ public:
 
 private:
   ros::NodeHandle nh_;
-  ros::ServerService coverage_service_;
-  ros::ServerClient map_client_;
+  ros::ServiceServer coverage_service_;
+  ros::ServiceClient map_client_;
 };
 
 #endif // COMPUTECENTROIDS_H

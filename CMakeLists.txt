@@ -5,17 +5,21 @@ project(coverage_2d)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  message_generation
   costmap_2d
-  jackal_gazebo
   map_server
   roscpp
   rospy
   tf
   nav_msgs
+  nav2d_navigator
+  nav2d_exploration
+  nav2d_karto
+  nav2d_msgs
 )
 
 ## System dependencies are found with CMake's conventions
-find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED)
 find_package(OpenCV REQUIRED)
 
 
@@ -49,18 +53,16 @@ find_package(OpenCV REQUIRED)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  Point2D.msg
+)
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  ComputeCentroids.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -70,10 +72,12 @@ find_package(OpenCV REQUIRED)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
+  nav_msgs
+  nav2d_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -87,7 +91,7 @@ find_package(OpenCV REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES coverage_2d
-  CATKIN_DEPENDS costmap_2d jackal_gazebo map_server roscpp rospy tf
+  CATKIN_DEPENDS message_runtime costmap_2d map_server roscpp rospy tf nav_msgs nav2d_msgs nav2d_navigator nav2d_exploration nav2d_karto
 #  DEPENDS system_lib
 )
 
@@ -99,18 +103,23 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-# add_library(coverage_2d
-#   src/${PROJECT_NAME}/coverage_2d.cpp
-# )
+add_library(coverage_2dlib
+  src/${PROJECT_NAME}/CoverageServer.cpp
+  src/${PROJECT_NAME}/geometry.cpp
+)
+add_dependencies(coverage_2dlib coverage_2dlib_gencpp)
+target_link_libraries(coverage_2dlib ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 ## Declare a cpp executable
-add_executable(voronoi src/voronoi.cpp)
-target_link_libraries(voronoi ${catkin_LIBRARIES})
+add_executable(coverage_2d src/coverage_2d.cpp)
+add_dependencies(coverage_2d coverage_2dlib_gencpp)
+target_link_libraries(coverage_2d coverage_2dlib ${catkin_LIBRARIES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

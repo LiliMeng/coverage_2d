@@ -1,7 +1,7 @@
-#include <boost/polygon/voronoi.h>
-#include <boost/polygon/point_data.h>
-#include <boost/polygon/segment_data.h>
-#include <boost/polygon/rectangle_data.h>
+#include <boost/polygon/voronoi.hpp>
+#include <boost/polygon/point_data.hpp>
+#include <boost/polygon/segment_data.hpp>
+#include <boost/polygon/rectangle_data.hpp>
 #include <iostream>
 
 typedef boost::polygon::segment_data<int> segment;
@@ -14,7 +14,7 @@ boost::polygon::point_data<double> intersection(const segment&, const segment&);
 int signum(double a);
 double clamp(double v, double lb, double ub);
 bool point_on_segment(const point&, const segment&);
-std::pair<int, int> generate_iteration_range(int i, std::vector<segment>edges, int direction = VERTICAL);
+std::pair<int, int> generate_iteration_range(int i, std::vector<segment>edges, int direction = boost::polygon::VERTICAL);
 std::vector<segment> generate_clipped_edges(const boost::polygon::voronoi_cell<double>& vc, const rectangle& bounding_box, const std::vector<point>& points);
 void print(const point&);
 void print(const segment&);
