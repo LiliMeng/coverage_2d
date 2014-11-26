@@ -1,3 +1,6 @@
+#ifndef GEOMETRY_H
+#define GEOMETRY_H
+
 #include <boost/polygon/voronoi.hpp>
 #include <boost/polygon/point_data.hpp>
 #include <boost/polygon/segment_data.hpp>
@@ -18,3 +21,5 @@ std::pair<int, int> generate_iteration_range(int i, std::vector<segment>edges, i
 std::vector<segment> generate_clipped_edges(const boost::polygon::voronoi_cell<double>& vc, const rectangle& bounding_box, const std::vector<point>& points);
 void print(const point&);
 void print(const segment&);
+
+#endif // GEOMETRY_H
