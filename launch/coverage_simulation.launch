@@ -1,0 +1,30 @@
+<launch>
+  <param name="use_sim_time" value="true" />
+  <rosparam file="$(find coverage_2d)/config/ros.yaml"/>
+
+	<node name="stage_ros" pkg="stage_ros" type="stageros" args="$(find coverage_2d)/world/coverage_2d.world">
+  	<param name="base_watchdog_timeout" value="0" />
+	</node>
+
+	<node name="Operator" pkg="nav2d_operator" type="operator" >
+		<remap from="scan" to="base_scan"/>
+		<rosparam file="$(find nav2d_tutorials)/param/operator.yaml"/>
+		<rosparam file="$(find nav2d_tutorials)/param/costmap.yaml" ns="local_map" />
+	</node>
+
+	<node name="Joystick" pkg="joy" type="joy_node" />
+	<node name="Remote" pkg="nav2d_remote" type="remote_joy" />
+
+	<param name="robot_description" command="$(find xacro)/xacro.py $(find p2os_urdf)/defs/pioneer3at.xacro" />
+
+	<node name="PioneerState" pkg="robot_state_publisher" type="state_publisher">
+		<remap from="joint_state" to="joint_state"/>
+		<param name="publish_frequency" type="double" value="15.0"/>
+		<param name="tf_prefix" type="string" value=""/>
+	</node>
+
+	<node name="PioneerTransforms" pkg="p2os_urdf" type="publisher"/>
+
+	<node name="rviz" pkg="rviz" type="rviz" args=" -d $(find coverage_2d)/config/coverage_2d.rviz" />
+
+</launch>

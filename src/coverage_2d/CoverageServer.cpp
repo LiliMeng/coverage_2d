@@ -47,9 +47,12 @@ bool CoverageServer::compute_voronoi_centroids(ComputeCentroidsRequest& req, Com
       double local_density;
       for(int j = 0; j < int(map.info.height); j++) {
         std::pair<int,int> x_range = generate_iteration_range(j, tessellations[i]);
+        bool scanning = true;
         if(x_range.first > -1 && x_range.second >= -1) {
           // Use range to iterate over map
           // <= ????
+          if(scanning)
+            scanning = false;
           for(int x_index = x_range.first; x_index <= x_range.second; x_index++) {
             // Handle Cases:
             //  Black -- Occupied
@@ -66,9 +69,8 @@ bool CoverageServer::compute_voronoi_centroids(ComputeCentroidsRequest& req, Com
             summation += local_density;
 
           }
-
         }
-        else {
+        else if(!scanning) {
           // End of the tessellation reached
           break;
         }
