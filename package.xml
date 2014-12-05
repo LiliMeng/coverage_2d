@@ -62,6 +62,7 @@
   <run_depend>nav2d_navigator</run_depend>
   <run_depend>nav2d_exploration</run_depend>
   <run_depend>nav2d_karto</run_depend>
+  <run_depend>tangentbug</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

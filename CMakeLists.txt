@@ -118,8 +118,12 @@ target_link_libraries(coverage_2dlib ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 ## Declare a cpp executable
 add_executable(coverage_2d src/coverage_2d.cpp)
-add_dependencies(coverage_2d coverage_2dlib_gencpp)
+add_dependencies(coverage_2d coverage_2d)
 target_link_libraries(coverage_2d coverage_2dlib ${catkin_LIBRARIES})
+
+add_executable(coverage_server src/coverage_server.cpp)
+add_dependencies(coverage_server coverage_2d)
+target_link_libraries(coverage_server coverage_2dlib ${catkin_LIBRARIES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

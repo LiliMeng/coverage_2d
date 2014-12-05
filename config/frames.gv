@@ -1,16 +1,18 @@
 digraph G {
-"base_link" -> "chassis_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
-"odom" -> "base_link"[label="Broadcaster: /ekf_localization\nAverage rate: 50.228 Hz\nMost recent transform: 8278.241 \nBuffer length: 4.599 sec\n"];
-"chassis_link" -> "fenders_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
-"front_mount" -> "front_laser"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
-"mid_mount" -> "front_mount"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
-"chassis_link" -> "mid_mount"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
-"chassis_link" -> "imu_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
-"chassis_link" -> "navsat_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
-"mid_mount" -> "rear_mount"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.740 \nBuffer length: 4.600 sec\n"];
-"map" -> "odom"[label="Broadcaster: /slam_gmapping\nAverage rate: 20.217 Hz\nMost recent transform: 8278.300 \nBuffer length: 4.600 sec\n"];
-"chassis_link" -> "front_left_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.250 \nBuffer length: 4.600 sec\n"];
-"chassis_link" -> "front_right_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.250 \nBuffer length: 4.600 sec\n"];
-"chassis_link" -> "rear_left_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.250 \nBuffer length: 4.600 sec\n"];
-"chassis_link" -> "rear_right_wheel_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.217 Hz\nMost recent transform: 8278.250 \nBuffer length: 4.600 sec\n"];
+"offset" -> "odom"[label="Broadcaster: /Mapper\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"map" -> "offset"[label="Broadcaster: /Mapper\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot_0/base_link" -> "robot_0/base_laser_link"[label="Broadcaster: /Stage\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot_0/base_footprint" -> "robot_0/base_link"[label="Broadcaster: /Stage\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot_1/base_link" -> "robot_1/base_laser_link"[label="Broadcaster: /Stage\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot_1/base_footprint" -> "robot_1/base_link"[label="Broadcaster: /Stage\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot_2/base_link" -> "robot_2/base_laser_link"[label="Broadcaster: /Stage\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot_2/base_footprint" -> "robot_2/base_link"[label="Broadcaster: /Stage\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot_0/odom" -> "robot_0/base_footprint"[label="Broadcaster: /Stage\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot_1/odom" -> "robot_1/base_footprint"[label="Broadcaster: /Stage\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot_2/odom" -> "robot_2/base_footprint"[label="Broadcaster: /Stage\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot1/world" -> "robot1/trueOdom"[label="Broadcaster: /robotframe1\nAverage rate: 2.250 Hz\nMost recent transform: 424.100 \nBuffer length: 4.000 sec\n"];
+"robot0/world" -> "robot0/trueOdom"[label="Broadcaster: /robotframe0\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot2/world" -> "robot2/trueOdom"[label="Broadcaster: /robotframe2\nAverage rate: 3.000 Hz\nMost recent transform: 425.000 \nBuffer length: 5.000 sec\n"];
+"robot1/world" -> "robot1/goal"[label="Broadcaster: /robotframe1\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
+"robot2/world" -> "robot2/goal"[label="Broadcaster: /robotframe2\nAverage rate: 10.204 Hz\nMost recent transform: 425.000 \nBuffer length: 4.900 sec\n"];
 }
