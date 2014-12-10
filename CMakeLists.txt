@@ -106,6 +106,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
@@ -124,6 +125,14 @@ target_link_libraries(coverage_2d coverage_2dlib ${catkin_LIBRARIES})
 add_executable(coverage_server src/coverage_server.cpp)
 add_dependencies(coverage_server coverage_2d)
 target_link_libraries(coverage_server coverage_2dlib ${catkin_LIBRARIES})
+
+add_executable(single_explorer src/coverage_2d/test/single_explorer.cpp)
+add_dependencies(single_explorer coverage_2d)
+target_link_libraries(single_explorer coverage_2dlib ${catkin_LIBRARIES})
+
+add_executable(map_validation src/coverage_2d/test/map_validation.cpp)
+add_dependencies(map_validation coverage_2d)
+target_link_libraries(map_validation coverage_2dlib ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

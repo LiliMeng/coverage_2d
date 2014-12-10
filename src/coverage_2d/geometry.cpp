@@ -101,7 +101,7 @@ std::pair<int, int> generate_iteration_range(int i, std::vector<segment> edges, 
           break;
         }
 
-        segment dummy( point(edge->low().x(), i), point(edge->high().x(), i));
+        segment dummy( point(((edge->low().x() < edge->high().x()) ? edge->low().x() : edge->high().x())-1, i), point(((edge->high().x() >= edge->low().x()) ? edge->high().x() : edge->low().x())+1, i));
         if(range.first == -1) {
           range.first = round( intersection( dummy, *(edge) ).x() );
         }
@@ -120,7 +120,7 @@ std::pair<int, int> generate_iteration_range(int i, std::vector<segment> edges, 
           break;
         }
 
-        segment dummy( point(edge->low().y(), i), point(edge->high().y(), i));
+        segment dummy( point(i, ((edge->low().y() < edge->high().y()) ? edge->low().y() : edge->high().y()) - 1), point(i, ((edge->high().y() >= edge->low().y()) ? edge->high().y() : edge->low().y()) + 1) );
         if(range.first == -1)
           range.first = round( intersection( dummy, *(edge) ).y() );
         else if(range.second == -1)
@@ -459,7 +459,12 @@ std::vector<segment> generate_clipped_edges(const voronoi_cell<double>& vc, cons
     }
     
     edges.insert( edges.end(), boundary_edges.begin(), boundary_edges.end() );
-    
+  }
+  else {
+    edges.push_back( top_bound );
+    edges.push_back( right_bound );
+    edges.push_back( bottom_bound );
+    edges.push_back( left_bound );
   }
   return edges;
 }

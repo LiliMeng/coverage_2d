@@ -1,9 +1,13 @@
-#ifndef COMPUTECENTROIDS_H
-#define COMPUTECENTROIDS_H
+#ifndef COVERAGESERVER_H
+#define COVERAGESERVER_H
 
 #include <ros/ros.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/GetMap.h>
+#include <tf/transform_listener.h>
+#include <tf/transform_datatypes.h>
+#include <actionlib/client/simple_action_client.h>
+#include <nav2d_navigator/MoveToPosition2DAction.h>
 #include <coverage_2d/geometry.h>
 #include <coverage_2d/ComputeCentroids.h>
 
@@ -22,4 +26,4 @@ private:
   ros::ServiceClient map_client_;
 };
 
-#endif // COMPUTECENTROIDS_H
+#endif // COVERAGESERVER_H

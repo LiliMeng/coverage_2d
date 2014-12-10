@@ -26,8 +26,24 @@ bool CoverageServer::compute_voronoi_centroids(ComputeCentroidsRequest& req, Com
     
     // Redefine set of points in boost format
     std::vector<point> L;
-    for(int i = 0; i < req.locations.size(); i++) L.push_back( point( req.locations[i].x, req.locations[i].y ) );
-
+    for(int i = 0; i < req.locations.size(); i++) {
+      double grid_x = (req.locations[i].x - map.info.origin.position.x)/map.info.resolution;
+      double grid_y = (req.locations[i].y - map.info.origin.position.y)/map.info.resolution;
+      L.push_back( point( int(grid_x), int(grid_y) ) );
+      tf::Quaternion qt( map.info.origin.orientation.x,
+                         map.info.origin.orientation.y,
+                         map.info.origin.orientation.z,
+                         1. );
+      double m_roll, m_pitch, m_yaw;
+      tf::Matrix3x3(qt).getRPY(m_roll, m_pitch, m_yaw);
+      ROS_INFO("Quat: %f, %f, %f, %f", map.info.origin.orientation.x,
+                                       map.info.origin.orientation.y,
+                                       map.info.origin.orientation.z,
+                                       1. );
+      ROS_INFO("x, y: %f, %f, %f", m_roll, m_pitch, m_yaw);
+      ROS_INFO("Grid x, y: %d, %d", int(grid_x), int(grid_y));
+    }
+    
     voronoi_diagram<double> vd;
     construct_voronoi( L.begin(), L.end(), &vd );
 
@@ -36,6 +52,17 @@ bool CoverageServer::compute_voronoi_centroids(ComputeCentroidsRequest& req, Com
     for(voronoi_diagram<double>::const_cell_iterator it = vd.cells().begin(); it != vd.cells().end(); it++) {
       const voronoi_cell<double> &c = *(it);
       tessellations.push_back( generate_clipped_edges( c, r, L ) );
+    }
+
+    /*std::cout << tessellations.size() << std::endl;
+    for(int k = 0; k < tessellations.size(); k++) std::cout << tessellations[k].size() << std::endl;*/
+    for(int k = 0; k < tessellations.size(); k++) {
+      std::cout << "Tessellation: " << k << std::endl;
+      for(int l = 0; l < tessellations[k].size(); l++) {
+        print(tessellations[k][l]);
+        std::cout << std::endl;
+      }
+      std::cout << std::endl;
     }
 
     // Iterate over each tesselation and compute centroids
@@ -74,6 +101,7 @@ bool CoverageServer::compute_voronoi_centroids(ComputeCentroidsRequest& req, Com
           // End of the tessellation reached
           break;
         }
+        std::cout << j << std::endl;
       }
 
       if(summation != 0) {
@@ -86,8 +114,8 @@ bool CoverageServer::compute_voronoi_centroids(ComputeCentroidsRequest& req, Com
         centroid_d.y( double(L[i].y()) );
       }
 
-      res.centroids[i].x = int(centroid_d.x());
-      res.centroids[i].y = int(centroid_d.y());
+      res.centroids[i].x = int(centroid_d.x())*map.info.resolution + map.info.origin.position.x;
+      res.centroids[i].y = int(centroid_d.y())*map.info.resolution + map.info.origin.position.y;
           
     }
 

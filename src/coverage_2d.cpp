@@ -22,7 +22,7 @@ int main(int argc, char** argv)
   }
 
   // Initialize the centroid server
-  ros::ServiceClient centroid_server = nh.serviceClient<coverage_2d::ComputeCentroids>("compute_voronoi_centroids");
+  ros::ServiceClient centroid_server = nh.serviceClient<coverage_2d::ComputeCentroids>("robot_0/compute_voronoi_centroids");
   tf::TransformListener robot_transforms;
   
   if(N > 0 && centroid_server.isValid()) {
@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     
     for(int i = 0; i < robot_names.size(); i++) {
       tf::StampedTransform robot_tf;
-      robot_transforms.lookupTransform( robot_names[i].c_str(), "/map", ros::Time(0), robot_tf );
+      robot_transforms.lookupTransform( robot_names[i].c_str(), "/map", ros::Time::now(), robot_tf );
       centroid_compute.request.locations[i].x = robot_tf.getOrigin().x();
       centroid_compute.request.locations[i].y = robot_tf.getOrigin().y();
     }
