@@ -10,7 +10,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "coverage_2d");
   ros::NodeHandle nh;
 
-  int N = 3;  // Define the number of robots
+  int N = 1;  // Define the number of robots
   std::vector<ros::Publisher> robot_goal_pubs(N);
   std::vector<geometry_msgs::Twist> robot_twists(N);
   std::vector<std::string> robot_names;
