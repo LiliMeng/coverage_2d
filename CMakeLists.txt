@@ -134,6 +134,11 @@ add_executable(map_validation src/coverage_2d/test/map_validation.cpp)
 add_dependencies(map_validation coverage_2d)
 target_link_libraries(map_validation coverage_2dlib ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
+## Add all of the demos
+add_executable(coverage_demo src/coverage_2d/demo/coverage_demo.cpp)
+add_dependencies(coverage_demo coverage_2d)
+target_link_libraries(coverage_demo coverage_2dlib ${catkin_LIBRARIES})
+
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(coverage_2d_node coverage_2d_generate_messages_cpp)

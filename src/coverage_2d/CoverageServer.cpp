@@ -116,7 +116,6 @@ bool CoverageServer::compute_voronoi_centroids(ComputeCentroidsRequest& req, Com
 
       res.centroids[i].x = int(centroid_d.x())*map.info.resolution + map.info.origin.position.x;
       res.centroids[i].y = int(centroid_d.y())*map.info.resolution + map.info.origin.position.y;
-          
     }
 
     ROS_INFO("ComputeCentroids service successfully completed.");
