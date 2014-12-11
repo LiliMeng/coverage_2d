@@ -130,6 +130,10 @@ add_executable(single_explorer src/coverage_2d/test/single_explorer.cpp)
 add_dependencies(single_explorer coverage_2d)
 target_link_libraries(single_explorer coverage_2dlib ${catkin_LIBRARIES})
 
+add_executable(pair_exploration src/coverage_2d/test/pair_exploration.cpp)
+add_dependencies(pair_exploration coverage_2d)
+target_link_libraries(pair_exploration coverage_2dlib ${catkin_LIBRARIES})
+
 add_executable(map_validation src/coverage_2d/test/map_validation.cpp)
 add_dependencies(map_validation coverage_2d)
 target_link_libraries(map_validation coverage_2dlib ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})

@@ -27,8 +27,9 @@ int main(int argc, char** argv)
   if(centroid_client.isValid()) {
     robot_transforms.waitForTransform( "/map", "/base_link", ros::Time(0), ros::Duration(2.) );
     // Initial conditions
+    int max_iterations = 100;
     int iteration_number = 0;
-    while(iteration_number < 10) {
+    while(iteration_number < max_iterations) {
       ROS_INFO("Performing coverage iteration step %d.", iteration_number);
       coverage_2d::ComputeCentroids centroid_compute;
       centroid_compute.request.locations.resize(1);

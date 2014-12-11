@@ -16,10 +16,14 @@
 		<rosparam file="$(find nav2d_tutorials)/param/costmap.yaml" ns="local_map" />
 	</node>
 
-	<!-- Start Mapper to genreate map from laser scans -->
-	<node name="Mapper" pkg="nav2d_karto" type="mapper">
+	<!-- Load the environment map in the map_server -->
+	<node name="MapServer" pkg="map_server" type="map_server" args="$(find nav2d_tutorials)/world/tutorial.yaml" />
+
+	<!-- Start particle filter to track the robot's position -->
+	<node name="SelfLocalizer" pkg="nav2d_localizer" type="localizer">
 		<remap from="scan" to="base_scan"/>
-		<rosparam file="$(find nav2d_tutorials)/param/mapper.yaml"/>
+		<param name="min_particles" type="int" value="5000"/>
+		<param name="max_particles" type="int" value="20000"/>
 	</node>
 
 	<!-- Start the Navigator to move the robot autonomously -->
@@ -27,8 +31,6 @@
 		<rosparam file="$(find nav2d_tutorials)/param/navigator.yaml"/>
 	</node>
 
-	<node name="GetMap" pkg="nav2d_navigator" type="get_map_client" />
-	<node name="Explore" pkg="nav2d_navigator" type="explore_client" />
 	<node name="SetGoal" pkg="nav2d_navigator" type="set_goal_client" />
 
 	<!-- Start the joystick-driver and remote-controller for operation-->
@@ -44,6 +46,6 @@
 	<node name="back_right_wheel" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 p3at_back_right_hub p3at_back_right_wheel 100" />
 
 	<!-- RVIZ to view the visualization -->
-	<node name="RVIZ" pkg="rviz" type="rviz" args=" -d $(find nav2d_tutorials)/param/tutorial3.rviz" />
+	<node name="RVIZ" pkg="rviz" type="rviz" args=" -d $(find nav2d_tutorials)/param/tutorial2.rviz" />
 
 </launch>

@@ -1,4 +1,5 @@
-coverage_2d/Point2D coverage_bounds
+float32 map_width
+float32 map_height
 coverage_2d/Point2D[] locations
 ---
 coverage_2d/Point2D[] centroids
